@@ -1,0 +1,44 @@
+version: "3"
+
+tasks:
+  # ── Logical replication ──────────────────────────────────────────────────────
+
+  up:logical:
+    desc: Start logical replication cluster
+    cmd: docker compose -f docker-compose.logical.yml up -d
+
+  down:logical:
+    desc: Stop logical replication cluster
+    cmd: docker compose -f docker-compose.logical.yml down
+
+  clean:logical:
+    desc: Stop logical replication cluster and remove volumes
+    cmd: docker compose -f docker-compose.logical.yml down -v
+
+  # ── Streaming replication ────────────────────────────────────────────────────
+
+  up:streaming:
+    desc: Start streaming replication cluster
+    cmd: docker compose -f docker-compose.streaming.yml up -d
+
+  down:streaming:
+    desc: Stop streaming replication cluster
+    cmd: docker compose -f docker-compose.streaming.yml down
+
+  clean:streaming:
+    desc: Stop streaming replication cluster and remove volumes
+    cmd: docker compose -f docker-compose.streaming.yml down -v
+
+  # ── Both clusters ────────────────────────────────────────────────────────────
+
+  up:
+    desc: Start both clusters
+    deps: [up:logical, up:streaming]
+
+  down:
+    desc: Stop both clusters
+    deps: [down:logical, down:streaming]
+
+  clean:
+    desc: Stop both clusters and remove all volumes
+    deps: [clean:logical, clean:streaming]

@@ -13,8 +13,8 @@ services:
     volumes:
       - primary_data:/var/lib/postgresql
       - ./init:/docker-entrypoint-initdb.d
-      - ./config/postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./config/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./configs/logical/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./configs/logical/pg_hba.conf:/etc/postgresql/pg_hba.conf
     command: >
       postgres
       -c config_file=/etc/postgresql/postgresql.conf
