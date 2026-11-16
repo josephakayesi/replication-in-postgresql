@@ -143,13 +143,24 @@ docker exec -it streaming-replica-1 psql -U postgres -d mydb -c "SELECT * FROM p
 
 ## Destroying Infrastructure
 
-| Command | Effect |
-|---|---|
-| `task down:logical` | Stop logical cluster, keep volumes |
-| `task clean:logical` | Stop logical cluster, delete volumes |
-| `task down:streaming` | Stop streaming cluster, keep volumes |
+| Command                | Effect                                 |
+| ---------------------- | -------------------------------------- |
+| `task down:logical`    | Stop logical cluster, keep volumes     |
+| `task clean:logical`   | Stop logical cluster, delete volumes   |
+| `task down:streaming`  | Stop streaming cluster, keep volumes   |
 | `task clean:streaming` | Stop streaming cluster, delete volumes |
-| `task down` | Stop both clusters, keep volumes |
-| `task clean` | Stop both clusters, delete all volumes |
+| `task down`            | Stop both clusters, keep volumes       |
+| `task clean`           | Stop both clusters, delete all volumes |
 
 Use `clean` when you want a fresh start — for example, before re-running initialization scripts from scratch.
+
+## Deep dive
+
+- Postgres uses WAL (Write-Ahead Logs) to keep track of data changes
+- An LSN (Log Sequence Number) tells Postgres exactly which point in the WAL logs replication has reached.
+
+PostgreSQL is a memory-first database: reads come from shared buffers (even if disk is outdated), writes update memory first, WAL guarantees durability, and disk is updated later for persistence and recovery.
+
+## Dynamo Failure Detection
+
+Because membership changes are explicitly controlled by an administrator, failure detection in Dynamo is intentionally lightweight and decentralized. Nodes use gossip-based peer communication to detect unreachability, and failures are treated as temporary suspicions rather than immediate removals, since network partitions and transient outages are expected.
